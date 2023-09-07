@@ -1,6 +1,8 @@
 package sistema.empleadosGUI;
 
 import java.sql.ResultSet;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import sistema.empleadosBL.empleadosBL;
 import sistema.empleadosDAL.conexion;
 
@@ -16,12 +18,21 @@ import sistema.empleadosDAL.conexion;
  * @author jeyso
  */
 public class frmEmpleados extends javax.swing.JFrame {
-
+     DefaultTableModel modelo;
+     
+     
     /**
      * Creates new form frmEmpleados
      */
     public frmEmpleados() {
         initComponents();
+        
+        String[] titulos={"ID","Nombre","Correo"};
+        modelo= new DefaultTableModel(null,titulos);
+        tblEmpleados.setModel(modelo);
+        
+        this.mostrarDatos();
+        this.limpiar();
     }
 
     /**
@@ -40,11 +51,11 @@ public class frmEmpleados extends javax.swing.JFrame {
         btnBorrar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         txtID = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        txtNombre = new javax.swing.JTextField();
+        txtCorreo = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        txtNombre = new javax.swing.JLabel();
-        txtCorreo = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -59,8 +70,15 @@ public class frmEmpleados extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblEmpleadosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblEmpleados);
 
+        btnAgregar.setForeground(new java.awt.Color(51, 153, 0));
+        btnAgregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/sistema/recursos/agregar.png"))); // NOI18N
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -68,6 +86,8 @@ public class frmEmpleados extends javax.swing.JFrame {
             }
         });
 
+        btnEditar.setForeground(new java.awt.Color(0, 0, 204));
+        btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/sistema/recursos/editar.png"))); // NOI18N
         btnEditar.setText("Editar");
         btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -75,6 +95,8 @@ public class frmEmpleados extends javax.swing.JFrame {
             }
         });
 
+        btnBorrar.setForeground(new java.awt.Color(204, 0, 0));
+        btnBorrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/sistema/recursos/delate.png"))); // NOI18N
         btnBorrar.setText("Borrar");
         btnBorrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -82,6 +104,8 @@ public class frmEmpleados extends javax.swing.JFrame {
             }
         });
 
+        btnCancelar.setForeground(new java.awt.Color(204, 153, 0));
+        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/sistema/recursos/cancelar.png"))); // NOI18N
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -89,17 +113,19 @@ public class frmEmpleados extends javax.swing.JFrame {
             }
         });
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        txtID.setEditable(false);
+
+        txtNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                txtNombreActionPerformed(evt);
             }
         });
 
         jLabel1.setText("ID:");
 
-        txtNombre.setText("Nombre:");
+        jLabel2.setText("Nombre:");
 
-        txtCorreo.setText("Correo:");
+        jLabel3.setText("Correo:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -110,25 +136,25 @@ public class frmEmpleados extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtNombre)
-                            .addComponent(txtCorreo)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
-                            .addComponent(jTextField2))
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(txtCorreo, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
+                            .addComponent(txtNombre))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(19, Short.MAX_VALUE))
+                        .addContainerGap(28, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(btnAgregar)
-                        .addGap(36, 36, 36)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnEditar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(btnBorrar)
-                        .addGap(33, 33, 33)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCancelar)
                         .addGap(33, 33, 33))))
         );
@@ -140,13 +166,13 @@ public class frmEmpleados extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtNombre)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtCorreo)
+                .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAgregar)
@@ -161,11 +187,11 @@ public class frmEmpleados extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
         // TODO add your handling code here:
         
          
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_txtNombreActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
         // TODO add your handling code here:
@@ -173,12 +199,24 @@ public class frmEmpleados extends javax.swing.JFrame {
         conexion objConexion=new conexion();
         
         empleadosBL oEmpleados = recuperarDatosGUI();
-        //
+        
         String strSentenciaInsert= String.format("INSERT INTO Empleados (ID, Nombre, Correo) "
                 + "VALUES (null, '%s', '%s')",oEmpleados.getNombre(),oEmpleados.getCorreo());
         
         objConexion.ejecutarSentenciaSQL(strSentenciaInsert);
-        try {
+        
+        this.mostrarDatos();
+        this.limpiar();
+        
+    }//GEN-LAST:event_btnAgregarActionPerformed
+   public void mostrarDatos(){
+       while(modelo.getRowCount()>0){
+          modelo.removeRow(0);
+           
+       }
+       conexion objConexion=new conexion();
+
+      try {
             ResultSet resultado= objConexion.consusltarRegistro("SELECT * FROM Empleados");
             
             while (resultado.next()) {
@@ -186,12 +224,21 @@ public class frmEmpleados extends javax.swing.JFrame {
                 System.out.println( resultado.getString("Nombre"));
                 System.out.println( resultado.getString("Correo"));
                 
+                Object[] oUsuario={resultado.getString("ID"),resultado.getString("Nombre"),resultado.getString("Correo")};
+                
+                modelo.addRow(oUsuario);
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(e);    
         }
-    }//GEN-LAST:event_btnAgregarActionPerformed
-     public empleadosBL recuperarDatosGUI(){
+      
+       
+       
+   }
+   
+    
+    
+    public empleadosBL recuperarDatosGUI(){
          empleadosBL oEmpleados=new empleadosBL();
          
          int ID=(txtID.getText().isEmpty())?0: Integer.parseInt(txtID.getText());
@@ -203,17 +250,71 @@ public class frmEmpleados extends javax.swing.JFrame {
          //System.out.println("Datos: "+ oEmpleados.getNombre() + " " + oEmpleados.getCorreo());
          return oEmpleados;
      }
+    public void limpiar(){
+    
+        txtID.setText("");
+        txtNombre.setText("");
+        txtCorreo.setText("");
+        
+        btnAgregar.setEnabled(true);
+        btnEditar.setEnabled(false);
+        btnBorrar.setEnabled(false);
+    }
+    
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         // TODO add your handling code here:
+        
+        this.limpiar();
+        
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
         // TODO add your handling code here:
+        conexion objConexion=new conexion();
+        
+        empleadosBL oEmpleados = recuperarDatosGUI();
+        
+        String strSentenciaInsert= String.format("UPDATE Empleados SET Nombre='%s',"
+                + "Correo='%s' where ID=%d ",oEmpleados.getNombre(),oEmpleados.getCorreo(),oEmpleados.getID());
+        
+        objConexion.ejecutarSentenciaSQL(strSentenciaInsert);
+        
+        this.mostrarDatos();
+        this.limpiar();
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
         // TODO add your handling code here:
+        
+          conexion objConexion=new conexion();
+        
+        empleadosBL oEmpleados = recuperarDatosGUI();
+        
+        String strSentenciaInsert= String.format("DELETE FROM Empleados WHERE ID=%d",oEmpleados.getID());
+        
+        objConexion.ejecutarSentenciaSQL(strSentenciaInsert);
+        
+        this.mostrarDatos();
+        this.limpiar();
     }//GEN-LAST:event_btnBorrarActionPerformed
+
+    private void tblEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblEmpleadosMouseClicked
+        // TODO add your handling code here:
+        
+        if(evt.getClickCount()==1){
+        
+            JTable receptor=(JTable)evt.getSource();
+            
+            txtID.setText( receptor.getModel().getValueAt(receptor.getSelectedRow(), 0).toString());
+            txtNombre.setText( receptor.getModel().getValueAt(receptor.getSelectedRow(), 1).toString());
+            txtCorreo.setText( receptor.getModel().getValueAt(receptor.getSelectedRow(), 2).toString());
+        }
+        
+        btnAgregar.setEnabled(false);
+        btnEditar.setEnabled(true);
+        btnBorrar.setEnabled(true);
+        
+    }//GEN-LAST:event_tblEmpleadosMouseClicked
 
     /**
      * @param args the command line arguments
@@ -256,12 +357,12 @@ public class frmEmpleados extends javax.swing.JFrame {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JTable tblEmpleados;
-    private javax.swing.JLabel txtCorreo;
+    private javax.swing.JTextField txtCorreo;
     private javax.swing.JTextField txtID;
-    private javax.swing.JLabel txtNombre;
+    private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
 }
